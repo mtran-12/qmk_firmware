@@ -217,3 +217,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
+
+#ifdef ENCODER_ENABLE
+void encoder_update_user(uint8_t index, bool clockwise) {
+    if (index == 0) {
+        switch (biton32(layer_state)) {
+            case _LOWER:
+                clockwise ? tap_code(KC_PGDN) : tap_code(KC_PGUP);
+                break;
+            case _RAISE:
+                clockwise ? tap_code(KC_VOLU) : tap_code(KC_VOLD);
+                break;
+              default:
+                  if (!is_alt_tab_active) {
+                      is_alt_tab_active = true;
+                      register_code(KC_LALT);
+                  }
+                  clockwise ? tap_code16(KC_TAB) : tap_code16(S(KC_TAB));
+    alt_tab_timer = timer_read();           
+                  break;
+              // default:
+              //     clockwise ? tap_code(KC_1) : tap_code(KC_2);
+              //     break;
+        }
+    }
+}
+#endif
+          
